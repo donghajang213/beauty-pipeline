@@ -1,0 +1,39 @@
+# ─────────────────────────────────────────────────────────────
+# 파일: pyproject.toml
+# 역할: 파이썬 프로젝트의 "명세서" — 프로젝트 정보, 의존 라이브러리, 도구 설정을 한 곳에.
+# 왜: requirements.txt 여러 개로 흩어지는 대신 표준(PEP 621) 한 파일로 관리.
+#     uv가 이 파일을 읽어 .venv 생성 + uv.lock(정확한 버전 고정)을 만든다.
+# 사용: `uv sync` (의존성 설치) / `uv run python -m ...` (가상환경 안에서 실행)
+# ─────────────────────────────────────────────────────────────
+
+[project]
+name = "beauty-pipeline"
+version = "0.1.0"
+description = "피부타입별 화장품 추천 데이터 플랫폼 — 수집/처리 파이프라인"
+requires-python = ">=3.12,<3.13" # 3.12 고정(RULES.md) — 로컬/CI/배포 이미지의 런타임 통일
+
+# 런타임 의존성: 실제 파이프라인 코드가 import 하는 것만 최소로
+dependencies = [
+    "requests>=2.32",     # HTTP 클라이언트 — 공공데이터 API 호출
+    "python-dotenv>=1.0", # .env 파일을 환경변수로 로드 (시크릿을 코드 밖으로)
+]
+
+# 개발 의존성: 개발/CI에서만 쓰는 도구 (배포 이미지에는 안 들어감)
+[dependency-groups]
+dev = [
+    "pytest>=8.0", # 단위 테스트
+    "ruff>=0.8",   # 린터 + 포매터 (RULES.md 3장)
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F=기본 오류, I=import 정렬, B=버그 유발 패턴, UP=구식 문법 현대화
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# 프로젝트 루트를 import 경로에 추가 — tests/에서 `from ingestion...` 이 되게 한다
+pythonpath = ["."]
