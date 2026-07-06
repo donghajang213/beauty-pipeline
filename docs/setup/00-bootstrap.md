@@ -6,9 +6,12 @@
 
 | 날짜 | 작업 | 방법 | 비고 |
 |---|---|---|---|
-| ~2026-07-06 | GCP 프로젝트 생성 | 콘솔 (수동) | 프로젝트 ID: `beauty-pipeline-499600` |
-| 2026-07-06 | Git 저장소 초기화, GitHub 리포 생성 | git / gh CLI | |
-| 2026-07-06 | 예산 알림 설정 | (아래 기록) | 크레딧 보호 — RULES.md 5장 |
+| 2026-06-16 | GCP 프로젝트 생성 | 콘솔 (수동) | 프로젝트 ID: `beauty-pipeline-499600` |
+| 2026-07-06 | 삭제 요청 상태였던 프로젝트 복구 | `gcloud projects undelete` | 6월에 삭제했던 것을 재사용 |
+| 2026-07-06 | Git 저장소 초기화, GitHub 리포 생성 (private) | git / gh CLI | https://github.com/donghajang213/beauty-pipeline |
+| 2026-07-06 | 결제 계정 연결 | `gcloud billing projects link` | 계정 `01A59C-739527-82790C` (KRW) |
+| 2026-07-06 | 필수 API 활성화 | `gcloud services enable` | BigQuery, GCS, Pub/Sub, Cloud Run, Secret Manager, Monitoring, Logging, IAM, Artifact Registry, Budgets |
+| 2026-07-06 | 예산 알림 생성 | `gcloud billing budgets create` | 월 ₩400,000 기준 25/50/80/100% 알림. **크레딧 제외(gross) 기준**으로 소진 속도 감시. 크레딧 실제 금액 확인 후 조정 필요 |
 | 2026-07-06 | 공공데이터포털 식약처 화장품 API 활용 신청 | 웹 (수동) | 승인 대기 시간 있음 |
 
 ## 왜 이 작업들은 수동인가?
