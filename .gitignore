@@ -1,0 +1,50 @@
+# ─────────────────────────────────────────────
+# 시크릿 (RULES.md 4.1 — 절대 커밋 금지)
+# ─────────────────────────────────────────────
+.env
+.env.*
+*.json.key
+*-credentials.json
+*service-account*.json
+secrets/
+
+# ─────────────────────────────────────────────
+# Python
+# ─────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# ─────────────────────────────────────────────
+# Terraform (state에는 시크릿이 포함될 수 있음)
+# ─────────────────────────────────────────────
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars          # 변수 값에 프로젝트 ID 등 포함 → 예시는 *.tfvars.example로 커밋
+.terraform.lock.hcl
+
+# ─────────────────────────────────────────────
+# dbt / Airflow 로컬 산출물
+# ─────────────────────────────────────────────
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+airflow/logs/
+airflow/*.db
+airflow/*.pid
+
+# ─────────────────────────────────────────────
+# IDE / OS
+# ─────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+Thumbs.db
+.DS_Store
