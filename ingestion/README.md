@@ -11,7 +11,8 @@
 | `config.py` | .env/환경변수에서 설정·시크릿 로드 (fail-fast) |
 | `datago.py` | 공공데이터포털 공용 클라이언트 — 재시도, 페이지네이션, 오류 통일 |
 | `probe.py` | 새 API 탐침 도구 — 인증키/응답 구조를 눈으로 확인 |
-| (예정) `batch/fetch_*.py` | API별 수집 스크립트: API → GCS raw 저장 |
+| `sources.py` | 원천 레지스트리 — 검증된 API 이름/URL 명세 (여기 추가하면 수집기가 자동 인식) |
+| `batch/fetch_to_gcs.py` | 배치 수집기: API → GCS raw (dt= 날짜 파티션, 재실행 멱등) |
 
 ## 처음 실행하기
 
