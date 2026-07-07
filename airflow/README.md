@@ -11,7 +11,11 @@
 |---|---|
 | `Dockerfile` | 공식 Airflow 이미지 + 파이프라인 의존성 |
 | `docker-compose.yml` | standalone 모드 1컨테이너 (웹UI+스케줄러+SQLite) |
-| `dags/beauty_daily.py` | 매일 02:00 KST: 원천 3개 병렬 fetch→load → dbt run→test |
+| `dags/beauty_daily.py` | 매일 02:00 KST: 원천 3개 fetch→load → dbt run→test |
+
+> 참고: DAG 그래프는 원천 3개가 병렬이지만, standalone(SQLite)은 **SequentialExecutor**라
+> 실제 실행은 순차다. 병렬이 필요해지면 PostgreSQL+LocalExecutor로 전환 — 지금은
+> "그래프 설계는 병렬 가능하게, 실행 환경은 최소로"가 의도된 선택.
 
 ## 실행
 

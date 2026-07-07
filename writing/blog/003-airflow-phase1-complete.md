@@ -1,0 +1,61 @@
+<!-- published: (발행 후 URL 기록) -->
+
+# 손으로 돌리던 파이프라인을 Airflow에게 넘기다 — Phase 1 완결
+
+## 배경
+
+[1편](001 링크), [2편](002 링크)에서 수집(API→GCS)과 적재·변환(BigQuery·dbt)까지 만들었다. 그런데 매일 아침 내가 명령 세 개를 순서대로 치고 있다면 그건 파이프라인이 아니라 수작업이다. Phase 1의 마지막 조각은 **오케스트레이션** — 이 순서를 기계에게 넘기는 일이다.
+
+## Airflow DAG: "작업 순서"를 코드로
+
+```
+fetch_ingredient   ─▶ load_ingredient   ─┐
+fetch_regulation   ─▶ load_regulation   ─┼─▶ dbt_run ─▶ dbt_test
+fetch_manufacturer ─▶ load_manufacturer ─┘
+```
+
+DAG(방향 비순환 그래프)는 이 그림을 파이썬으로 적은 것이다. Airflow는 매일 02:00(KST)에 그래프를 실행하고, 원천 3개는 병렬로, dbt는 전부 끝난 뒤에 돌린다. cron과의 결정적 차이: **실패가 UI에 보이고, 실패한 칸만 집어서 재실행**할 수 있다.
+
+```python
+default_args = {
+    "retries": 3,                        # 이번 주 3번의 인터넷 단절이 정해준 값
+    "retry_delay": timedelta(minutes=5),
+}
+```
+
+재시도는 2층 구조가 됐다. 코드 레벨(2→4→8초)은 순간 흔들림용, Airflow 레벨(5분×3회)은 몇 분짜리 회선 단절용. 지난주에 내가 손으로 재실행했던 그 장애들은 이제 기계가 알아서 넘긴다.
+
+## 선택: Cloud Composer 대신 로컬 Docker
+
+| | Cloud Composer | 로컬 Docker standalone |
+|---|---|---|
+| 비용 | 월 수십만 원 (상시 클러스터) | 0원 |
+| 실무 유사성 | 높음 | DAG 코드는 동일 (실행 환경만 다름) |
+
+배우려는 것은 DAG 설계지 클러스터 요금이 아니다. DAG 코드는 Composer로 그대로 이식 가능하므로 로컬을 택했다. 참고로 Airflow는 Windows 네이티브 실행이 안 돼서 Docker가 사실상 유일한 로컬 경로다.
+
+## 인증: 서비스 계정 키 파일을 만들지 않았다
+
+컨테이너 안에서 GCP에 인증하는 가장 쉬운 방법은 서비스 계정 키(JSON)를 발급받아 넣는 것이다. 하지만 키 파일은 GCP 보안 사고 원인 부동의 1위 — 만들지 않으면 유출도 없다. 대신 호스트의 ADC(gcloud 로그인 자격)를 읽기 전용 마운트했다:
+
+```yaml
+volumes:
+  - ${APPDATA}/gcloud/application_default_credentials.json:/opt/secrets/adc.json:ro
+```
+
+## 이번 편의 데이터 품질 사건 2건
+
+**1. autodetect의 타입 함정.** BigQuery 스키마 자동 감지가 `20070323`(허가일), 사업자등록번호를 INT64로 추론했다. dbt 빌드가 타입 오류로 실패하며 발견 — 의미상 이것들은 숫자가 아니라 **식별자**다(평균 낼 일이 없다). staging에서 문자열로 교정하고, 앞자리 0이 소실될 수 있는 사업자번호는 10자리로 복원했다.
+
+**2. unique 테스트가 실제 결함을 잡았다.** `company_seq`에 unique 테스트를 걸었더니 32,318행 중 175건 중복으로 실패. 프로파일링해 보니 전 컬럼이 동일한 완전 중복(원천 API의 품질 문제)이었다. staging에서 제거 — 2편에서 "테스트는 확인된 사실에만"이라고 썼는데, 이번엔 반대로 **테스트가 몰랐던 사실을 알려준** 사례다.
+
+## 결과
+
+- 트리거 한 번으로 수집(6.1만 건) → 적재 → 변환 → 품질 테스트 8건까지 무인 완주 *(실행 스크린샷/소요시간 첨부)*
+- dbt build: PASS 8/8
+- Phase 1 완료 — 남은 성공 기준은 "7일 무인 운영" (스케줄을 켜둔 채 일주일 관찰)
+
+다음 글부터 Phase 2: 피부타입별 가상 사용자 이벤트 생성기와 Pub/Sub 스트리밍이다.
+
+---
+*이 프로젝트의 전체 코드: [GitHub](https://github.com/donghajang213/beauty-pipeline)*
