@@ -21,6 +21,7 @@ class Settings:
     """파이프라인 전역 설정. 필드가 늘어나면 여기에 추가한다."""
 
     data_go_kr_service_key: str  # 공공데이터포털 인증키 (Decoding 키)
+    gcs_raw_bucket: str | None = None  # 데이터 레이크 버킷 이름 (terraform output data_lake_bucket)
 
 
 def get_settings() -> Settings:
@@ -35,4 +36,9 @@ def get_settings() -> Settings:
             "DATA_GO_KR_SERVICE_KEY가 설정되지 않았습니다. "
             ".env.example을 .env로 복사하고 공공데이터포털 인증키를 넣어주세요."
         )
-    return Settings(data_go_kr_service_key=key)
+    return Settings(
+        data_go_kr_service_key=key,
+        gcs_raw_bucket=os.getenv(
+            "GCS_RAW_BUCKET"
+        ),  # 없어도 됨 — GCS를 쓰는 코드가 사용 시점에 검증
+    )
