@@ -18,6 +18,7 @@ dependencies = [
     "python-dotenv>=1.0", # .env 파일을 환경변수로 로드 (시크릿을 코드 밖으로)
     "google-cloud-storage>=3.12.0",
     "tzdata>=2026.2",
+    "google-cloud-bigquery>=3.42.1",
 ]
 
 # 개발 의존성: 개발/CI에서만 쓰는 도구 (배포 이미지에는 안 들어감)
