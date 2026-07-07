@@ -5,8 +5,8 @@
 # 데이터셋을 계층으로 나누는 이유 (DW 설계의 표준 패턴, dbt와 짝을 이룸):
 #   raw     : 원본 그대로 적재 (수집기가 쓰는 영역)
 #   staging : 타입 정리/이름 통일 등 1차 정제 (dbt가 생성)
-#   mart    : 비즈니스 질문에 답하는 최종 테이블 — 추천 결과 등 (dbt가 생성, API가 읽음)
-# 지금은 raw만 만들고 staging/mart는 dbt를 도입하는 Phase 1에서 추가한다.
+#   marts   : 비즈니스 질문에 답하는 최종 테이블 — 추천 결과 등 (dbt가 생성, API가 읽음)
+# 데이터셋(그릇)은 Terraform이, 그 안의 테이블(내용물)은 dbt가 만든다 — 도구별 책임 분리.
 # ─────────────────────────────────────────────────────────────
 
 resource "google_bigquery_dataset" "raw" {
@@ -22,4 +22,23 @@ resource "google_bigquery_dataset" "raw" {
   delete_contents_on_destroy = true
 
   labels = var.labels
+}
+
+resource "google_bigquery_dataset" "staging" {
+  dataset_id  = "staging"
+  location    = var.region
+  description = "dbt 1차 정제 계층 — raw를 이름/타입 정리한 뷰. 사람이 직접 쿼리하지 않음"
+
+  # staging은 뷰(view) 위주라 저장 비용이 거의 없다 — 파티션 만료 불필요
+  delete_contents_on_destroy = true
+  labels                     = var.labels
+}
+
+resource "google_bigquery_dataset" "marts" {
+  dataset_id  = "marts"
+  location    = var.region
+  description = "비즈니스 마트 계층 — 추천 결과 등 최종 산출물. API/대시보드가 읽는 유일한 영역"
+
+  delete_contents_on_destroy = true
+  labels                     = var.labels
 }
