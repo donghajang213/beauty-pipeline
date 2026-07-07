@@ -1,0 +1,36 @@
+# ─────────────────────────────────────────────────────────────
+# 파일: dbt/models/staging/_models.yml
+# 역할: 모델 문서화 + 데이터 품질 테스트 선언
+# 테스트 동작: `dbt test` 실행 시 각 규칙이 SQL로 변환되어 위반 행이 있으면 실패한다.
+# "데이터가 이상하면 파이프라인이 먼저 안다" — JD의 '데이터 품질 관리'가 바로 이것.
+# 원칙: 테스트는 프로파일링으로 확인된 사실에만 건다 (희망사항 금지).
+# ─────────────────────────────────────────────────────────────
+
+version: 2
+
+models:
+  - name: stg_ingredient
+    description: "성분 사전 (최신 스냅샷, 성분명 기준 중복 제거)"
+    columns:
+      - name: ingredient_name_kr
+        description: "성분명(한글) — 이 테이블의 유일 키"
+        tests:
+          - not_null
+          - unique # 중복 제거 로직이 무너지면 여기서 잡힌다
+
+  - name: stg_regulation
+    description: "성분×국가 규제 (같은 성분 여러 행 = 정상이므로 unique 없음)"
+    columns:
+      - name: ingredient_std_name
+        description: "표준 성분명"
+        tests:
+          - not_null
+
+  - name: stg_manufacturer
+    description: "제조업체 (permit_date는 DATE로 타입 변환됨)"
+    columns:
+      - name: company_seq
+        description: "업체 일련번호 — 유일 키"
+        tests:
+          - not_null
+          - unique
