@@ -1,0 +1,32 @@
+# ─────────────────────────────────────────────────────────────
+# 파일: dbt/dbt_project.yml
+# 역할: dbt 프로젝트의 최상위 설정 — 이름, 폴더 위치, 모델별 기본 동작
+# dbt란: "SELECT문을 쓰면 테이블/뷰로 만들어주는" SQL 변환 프레임워크.
+#        + 모델 간 의존성 관리(ref), 데이터 품질 테스트, 문서화가 내장.
+# ─────────────────────────────────────────────────────────────
+
+name: beauty_pipeline
+version: "0.1.0"
+
+# profiles.yml(연결 정보)에서 어떤 프로필을 쓸지
+profile: beauty_pipeline
+
+# 모델(.sql)들이 있는 폴더
+model-paths: ["models"]
+macro-paths: ["macros"]
+
+# dbt run 산출물이 저장되는 폴더 (git 무시 대상)
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  beauty_pipeline:
+    staging:
+      # 뷰(view)로 생성: staging은 "정의"만 저장하고 조회 시 계산 — 저장 비용 0
+      +materialized: view
+      # BigQuery 데이터셋 지정 (macros/generate_schema_name.sql 참고)
+      +schema: staging
+    marts:
+      # 마트는 테이블로 실체화: API가 반복 조회하므로 매번 계산하면 느리고 비싸다
+      +materialized: table
+      +schema: marts
