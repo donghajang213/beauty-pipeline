@@ -1,0 +1,18 @@
+# ─────────────────────────────────────────────────────────────
+# 파일: dbt/profiles.yml
+# 역할: dbt가 BigQuery에 접속하는 방법 (DB 연결 문자열에 해당)
+# 보통 ~/.dbt/에 두지만, 시크릿이 없으므로(oauth = gcloud 로그인 재사용) 저장소에 커밋해
+# 팀원/CI가 같은 설정을 쓰게 한다. 실행 시 DBT_PROFILES_DIR=dbt 로 지정.
+# ─────────────────────────────────────────────────────────────
+
+beauty_pipeline:
+  target: dev # 기본 타깃. 나중에 prod 타깃(서비스 계정 인증)을 추가할 수 있다
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth # ADC(gcloud auth) 재사용 — 키 파일 불필요 = 유출 위험 0
+      project: beauty-pipeline-499600
+      dataset: staging # 기본 데이터셋 (모델별 +schema가 우선함)
+      location: asia-northeast3
+      threads: 4 # 의존성 없는 모델은 4개까지 동시 실행
+      job_execution_timeout_seconds: 300

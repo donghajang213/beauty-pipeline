@@ -1,0 +1,20 @@
+# ─────────────────────────────────────────────────────────────
+# 파일: dbt/models/staging/_sources.yml
+# 역할: dbt 바깥에서 만들어진 원천 테이블(raw)을 dbt에 "선언"한다.
+# 왜: 모델에서 raw.ingredient를 직접 쓰지 않고 {{ source('raw','ingredient') }} 로 참조하면
+#     ① 계보(lineage) 추적 ② 원천 신선도 검사 ③ 원천 변경 시 한 곳만 수정이 가능해진다.
+# ─────────────────────────────────────────────────────────────
+
+version: 2
+
+sources:
+  - name: raw
+    description: "수집 파이프라인(ingestion/batch)이 적재하는 원본 계층 — 식약처 스냅샷"
+    schema: raw
+    tables:
+      - name: ingredient
+        description: "화장품 원료성분 사전 (일 스냅샷, _PARTITIONTIME 파티션)"
+      - name: regulation
+        description: "규제 원료 — 성분×국가 단위 금지/제한 (일 스냅샷)"
+      - name: manufacturer
+        description: "화장품 제조업체 허가 정보 (일 스냅샷)"
