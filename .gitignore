@@ -27,8 +27,11 @@ build/
 .terraform/
 *.tfstate
 *.tfstate.*
-*.tfvars          # 변수 값에 프로젝트 ID 등 포함 → 예시는 *.tfvars.example로 커밋
-.terraform.lock.hcl
+# 변수 값에 프로젝트 ID 등 포함 → 예시는 *.tfvars.example로만 커밋
+# (주의: .gitignore는 패턴 뒤에 주석을 붙이면 패턴이 깨진다 — 주석은 반드시 별도 줄에)
+*.tfvars
+!*.tfvars.example
+# .terraform.lock.hcl 은 커밋한다 — 팀 전체가 동일한 프로바이더 버전을 쓰도록 고정하는 파일
 
 # ─────────────────────────────────────────────
 # dbt / Airflow 로컬 산출물
