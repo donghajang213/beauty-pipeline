@@ -1,0 +1,4 @@
+# 이 파일을 terraform.tfvars 로 복사한 뒤 실제 값을 채운다.
+# terraform.tfvars 는 .gitignore 에 있어 커밋되지 않는다 (환경별 값/식별자 분리 목적).
+project_id = "your-gcp-project-id"
+# region   = "asia-northeast3"   # 기본값이 서울이라 생략 가능
