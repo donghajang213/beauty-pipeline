@@ -3,6 +3,8 @@
 # ─────────────────────────────────────────────
 .env
 .env.*
+# 값이 없는 예시 파일은 커밋 대상 (! = 무시 예외)
+!.env.example
 *.json.key
 *-credentials.json
 *service-account*.json
