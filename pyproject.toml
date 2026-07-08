@@ -23,6 +23,8 @@ dependencies = [
     "google-cloud-bigquery>=3.25",
     "dbt-bigquery>=1.9",
     "google-cloud-pubsub>=2.39.0",
+    "fastapi>=0.139.0",
+    "uvicorn[standard]>=0.50.2",
 ]
 
 # 개발 의존성: 개발/CI에서만 쓰는 도구 (배포 이미지에는 안 들어감)
