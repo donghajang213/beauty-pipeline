@@ -13,6 +13,9 @@
 | `probe.py` | 새 API 탐침 도구 — 인증키/응답 구조를 눈으로 확인 |
 | `sources.py` | 원천 레지스트리 — 검증된 API 이름/URL 명세 (여기 추가하면 수집기가 자동 인식) |
 | `batch/fetch_to_gcs.py` | 배치 수집기: API → GCS raw (dt= 날짜 파티션, 재실행 멱등) |
+| `batch/load_to_bq.py` | GCS raw → BigQuery 날짜 파티션 적재 (load job, 파티션 교체 멱등) |
+| `streaming/generate_catalog.py` | 가상 카탈로그 300제품 (실제 성분명 기반, 시드 고정) → raw.products |
+| `streaming/event_generator.py` | 피부타입별 가상 행동 이벤트 → Pub/Sub → (BigQuery 구독) → raw.events |
 
 ## 처음 실행하기
 

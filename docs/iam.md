@@ -13,6 +13,20 @@
 | `roles/bigquery.dataEditor` | `raw` 데이터셋만 | 원본 테이블 생성/적재. staging/mart 오염 방지를 위해 데이터셋 단위 |
 | `roles/bigquery.jobUser` | 프로젝트 (예외) | load job 실행 권한. 이 역할은 프로젝트 단위로만 부여 가능해 예외 허용 |
 
+## sa-event-generator (이벤트 생성기)
+
+정의 위치: [terraform/pubsub.tf](../terraform/pubsub.tf)
+
+| 역할 | 부여 범위 | 이유 |
+|---|---|---|
+| `roles/pubsub.publisher` | `user-events` 토픽만 | 이벤트 발행. 구독/토픽 관리 불가 |
+
+## Pub/Sub 서비스 에이전트 (구글 관리 로봇)
+
+| 역할 | 부여 범위 | 이유 |
+|---|---|---|
+| `roles/bigquery.dataEditor` | `raw` 데이터셋 | BigQuery 구독이 raw.events에 메시지를 쓰기 위함 |
+
 ## 사람 계정
 
 | 계정 | 역할 | 비고 |
