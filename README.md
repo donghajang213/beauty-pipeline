@@ -4,10 +4,12 @@
 > **피부타입별 화장품 추천 API**를 제공하는 엔드투엔드 데이터 플랫폼입니다.
 > 모든 인프라는 Terraform으로 관리되고, CI/CD와 보안 스캔이 자동화되어 있습니다.
 
-🚧 **현재 상태**: Phase 1 (배치 파이프라인 MVP) 완료 — 일 배치 무인 운영 관찰 중 · [로드맵](PLAN.md#5-단계별-로드맵)
+🚀 **현재 상태**: Phase 2 완료 — **추천 API 라이브**: https://recommendation-api-bfvsee2ydq-du.a.run.app/docs · [로드맵](PLAN.md#5-단계별-로드맵)
 
-**지금까지의 숫자**: 식약처 3개 API에서 61,408건 수집 → GCS 레이크 → BigQuery 날짜 파티션 적재 →
-dbt staging 3모델 + 품질 테스트 8건(실중복 176건 탐지·제거) → Airflow 일 배치 DAG → CI 자동 검사
+**지금까지의 숫자**: 식약처 3개 API 61,408건 배치 수집 + Pub/Sub 스트리밍(유실 0) →
+dbt 모델 6개·테스트 15건(실결함 176건 탐지) → 추천 신호 복원 72%(무작위 36%) → Cloud Run 서빙 · 상시 비용 0원
+
+> 📖 처음 오셨다면: [docs/project-tour.md](docs/project-tour.md) — 데이터 흐름과 모든 폴더 안내
 
 ## 문서 안내
 

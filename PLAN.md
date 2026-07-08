@@ -137,12 +137,12 @@ data_engineer_portfolio/
 - [x] 기본 CI: PR마다 lint + 단위 테스트 자동 실행
 - [ ] (관찰 항목) 일 배치 7일+ 무인 운영 — 성공 기준 7.2
 
-### Phase 2 — 스트리밍 + 서빙 (4~5주차: ~8/9)
-- [ ] 이벤트 스키마 설계 (조회/찜/구매/평점) + Pub/Sub 토픽/구독 (Terraform)
-- [ ] 가상 이벤트 생성기 (Cloud Run) → Pub/Sub → BigQuery 스트리밍 적재
-- [ ] dbt 추천 mart: 성분 유사도 + 피부타입별 인기 집계
-- [ ] 추천 API (FastAPI) + Docker화 + Cloud Run 배포
-- [ ] CD: main 병합 시 자동 배포
+### Phase 2 — 스트리밍 + 서빙 (4~5주차: ~8/9) — 2026-07-08 조기 완료 (CD 제외)
+- [x] 이벤트 스키마 설계 (ADR 001) + Pub/Sub 토픽/BigQuery 구독 (Terraform)
+- [x] 가상 이벤트 생성기 → Pub/Sub → BigQuery 스트리밍 적재 (유실 0 검증)
+- [x] dbt 추천 mart: 행동 점수 + 규제 필터 + 피부타입 순위 (신호 복원 72% vs 36%)
+- [x] 추천 API (FastAPI) + Docker화 + Cloud Run 공개 배포
+- [ ] CD: main 병합 시 자동 배포 → Phase 3의 보안 게이트와 함께 구축
 
 ### Phase 3 — DevSecOps + 운영 (6주차: ~8/16)
 - [ ] CI에 보안 게이트 추가: gitleaks(시크릿), Bandit(SAST), Trivy(이미지 스캔)
