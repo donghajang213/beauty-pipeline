@@ -40,13 +40,15 @@ with DAG(
     tags=["batch", "beauty-pipeline"],
 ) as dag:
     # dbt: 전체 적재가 끝난 뒤 staging 갱신 → 품질 테스트
+    # --no-partial-parse: 호스트에서 만든 target/ 캐시가 컨테이너 경로와 안 맞아 KeyError를
+    # 낸 적이 있다 (2026-07-08). 빌드 산출물은 실행 환경 간 공유 금지 — 매번 전체 파싱한다.
     dbt_run = BashOperator(
         task_id="dbt_run",
-        bash_command="cd /opt/beauty/dbt && dbt run --profiles-dir .",
+        bash_command="cd /opt/beauty/dbt && dbt run --profiles-dir . --no-partial-parse",
     )
     dbt_test = BashOperator(
         task_id="dbt_test",
-        bash_command="cd /opt/beauty/dbt && dbt test --profiles-dir .",
+        bash_command="cd /opt/beauty/dbt && dbt test --profiles-dir . --no-partial-parse",
     )
 
     for source in SOURCES:
