@@ -34,3 +34,24 @@ models:
         tests:
           - not_null
           - unique
+
+  - name: stg_products
+    description: "합성 카탈로그 최신 스냅샷 (ADR 001 결정 3)"
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_events
+    description: "행동 이벤트 — JSON 파싱 + event_id 중복 제거 (at-least-once 대응)"
+    columns:
+      - name: event_id
+        description: "중복 제거 후이므로 반드시 유일"
+        tests:
+          - not_null
+          - unique
+      - name: event_type
+        tests:
+          - accepted_values:
+              values: ["view", "like", "purchase", "rating"]
