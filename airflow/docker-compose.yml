@@ -1,0 +1,40 @@
+# ─────────────────────────────────────────────────────────────
+# 파일: airflow/docker-compose.yml
+# 역할: 로컬 Airflow를 컨테이너 하나(standalone 모드)로 띄우는 정의
+# 왜 standalone: 웹서버+스케줄러+DB(SQLite)를 한 프로세스로 — 학습/개발용 최소 구성.
+#     실무 프로덕션은 CeleryExecutor+PostgreSQL 다중 컨테이너지만, 지금 목적(DAG 설계
+#     학습과 일 배치 운영)에는 과하다. (Cloud Composer를 안 쓰는 이유 = 월 수십만 원)
+# 실행: cd airflow && docker compose up -d --build
+#       웹 UI: http://localhost:8080 (초기 비밀번호: standalone_admin_password.txt)
+# ─────────────────────────────────────────────────────────────
+
+services:
+  airflow:
+    build: . # 위 Dockerfile로 이미지 빌드
+    container_name: beauty-airflow
+    command: standalone
+    ports:
+      - "8080:8080" # 웹 UI
+
+    # 시크릿/설정 주입: .env의 DATA_GO_KR_SERVICE_KEY, GCS_RAW_BUCKET이 컨테이너 환경변수가 된다
+    env_file:
+      - ../.env
+
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false" # 예제 DAG 30개 숨김
+      AIRFLOW__CORE__DEFAULT_TIMEZONE: "Asia/Seoul" # 스케줄 해석 기준 시간대
+      # 컨테이너 안에서 GCP 인증: 마운트된 ADC 파일을 쓴다 (서비스 계정 키 발급 없이!)
+      GOOGLE_APPLICATION_CREDENTIALS: /opt/secrets/adc.json
+      GOOGLE_CLOUD_PROJECT: beauty-pipeline-499600
+      # 우리 코드를 import 가능하게
+      PYTHONPATH: /opt/beauty
+      PYTHONUTF8: "1"
+
+    volumes:
+      # DAG 파일 — 수정하면 컨테이너 재시작 없이 반영된다
+      - ./dags:/opt/airflow/dags
+      # 파이프라인 코드/dbt — 호스트의 코드를 그대로 사용 (이미지 재빌드 불필요)
+      - ../ingestion:/opt/beauty/ingestion:ro
+      - ../dbt:/opt/beauty/dbt
+      # 로컬 gcloud 인증(ADC)을 읽기 전용으로 마운트 — 키 파일 생성 없이 인증
+      - ${APPDATA}/gcloud/application_default_credentials.json:/opt/secrets/adc.json:ro
