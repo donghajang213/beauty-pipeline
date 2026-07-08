@@ -27,6 +27,15 @@
 |---|---|---|
 | `roles/bigquery.dataEditor` | `raw` 데이터셋 | BigQuery 구독이 raw.events에 메시지를 쓰기 위함 |
 
+## sa-recommendation-api (추천 API, Cloud Run)
+
+정의 위치: [terraform/cloudrun.tf](../terraform/cloudrun.tf)
+
+| 역할 | 부여 범위 | 이유 |
+|---|---|---|
+| `roles/bigquery.dataViewer` | `marts` 데이터셋만 | 추천 결과 조회. raw/staging 접근 불가 — 계층 규칙을 IAM으로 강제 |
+| `roles/bigquery.jobUser` | 프로젝트 (예외) | 쿼리 실행 권한 |
+
 ## 사람 계정
 
 | 계정 | 역할 | 비고 |

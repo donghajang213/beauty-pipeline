@@ -16,6 +16,12 @@ variable "region" {
   default     = "asia-northeast3" # default가 있으면 tfvars에서 생략 가능
 }
 
+variable "api_image_tag" {
+  description = "추천 API 이미지 태그 — 새 버전 배포 = 이 값 변경 후 apply"
+  type        = string
+  default     = "0.1.0"
+}
+
 variable "labels" {
   description = "모든 리소스에 붙일 공통 라벨 — 비용 대시보드에서 '이 프로젝트가 쓴 돈'을 필터링하는 용도"
   type        = map(string)
