@@ -18,3 +18,7 @@ sources:
         description: "규제 원료 — 성분×국가 단위 금지/제한 (일 스냅샷)"
       - name: manufacturer
         description: "화장품 제조업체 허가 정보 (일 스냅샷)"
+      - name: products
+        description: "가상 제품 카탈로그 — 실제 성분명 기반 합성 (generate_catalog.py, ADR 001)"
+      - name: events
+        description: "사용자 행동 이벤트 — Pub/Sub BigQuery 구독이 적재 (data 컬럼에 JSON 원문)"

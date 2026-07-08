@@ -1,0 +1,26 @@
+# marts 계층 문서화 + 품질 테스트 (원칙: 프로파일링/설계로 보장되는 사실에만)
+
+version: 2
+
+models:
+  - name: recommendations
+    description: >
+      피부타입별 추천 테이블 (추천 API의 데이터 원천).
+      score = views*1 + likes*3 + purchases*5 + avg_rating*2.
+      금지 성분 제품 제외, 제한 성분은 민감성 피부에서 제외.
+    columns:
+      - name: rec_key
+        description: "skin_type|product_id — 이 마트의 grain을 지키는 유일 키"
+        tests:
+          - not_null
+          - unique
+      - name: skin_type
+        tests:
+          - accepted_values:
+              values: ["dry", "oily", "combination", "sensitive", "normal"]
+      - name: score
+        tests:
+          - not_null
+      - name: rank
+        tests:
+          - not_null
