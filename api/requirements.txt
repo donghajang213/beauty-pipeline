@@ -1,0 +1,5 @@
+# API 컨테이너 전용 의존성 — pyproject(개발 전체)와 분리해 이미지를 가볍게 유지
+# 버전은 uv.lock에서 검증된 것과 같은 메이저로 고정
+fastapi>=0.139
+uvicorn>=0.50
+google-cloud-bigquery>=3.25
