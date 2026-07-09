@@ -144,11 +144,12 @@ data_engineer_portfolio/
 - [x] 추천 API (FastAPI) + Docker화 + Cloud Run 공개 배포
 - [ ] CD: main 병합 시 자동 배포 → Phase 3의 보안 게이트와 함께 구축
 
-### Phase 3 — DevSecOps + 운영 (6주차: ~8/16)
-- [ ] CI에 보안 게이트 추가: gitleaks(시크릿), Bandit(SAST), Trivy(이미지 스캔)
-- [ ] Secret Manager로 모든 시크릿 이전
-- [ ] IAM 최소 권한 정리 (서비스 계정별 역할 문서화)
-- [ ] Cloud Monitoring 알림: DAG 실패, API 5xx, 비용 초과
+### Phase 3 — DevSecOps + 운영 (6주차: ~8/16) — 2026-07-09 조기 완료
+- [x] CI에 보안 게이트 추가: gitleaks(시크릿) + Bandit(SAST) + Trivy(이미지) — 오탐 판단 근거 문서화
+- [x] Secret Manager로 인증키 이전 (그릇은 Terraform / 값은 수동 — state 유출 방지)
+- [x] IAM 최소 권한 정리 (SA 5개, 근거는 docs/iam.md)
+- [x] Cloud Monitoring 알림: API uptime/5xx + 예산(Phase 0). DAG 실패 알림은 로컬 Airflow 한계로 미구현 (트레이드오프 문서화)
+- [x] (Phase 2 이월) CD: main 병합 시 자동 배포 — WIF 키리스, 첫 배포 실증 완료
 
 ### Phase 4 — 마무리 (7~8주차: ~8/31)
 - [ ] 대시보드 (Looker Studio 또는 Grafana)
