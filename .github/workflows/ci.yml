@@ -78,7 +78,7 @@ jobs:
         run: docker build -t api-scan:ci -f api/Dockerfile .
 
       - name: Image scan (Trivy)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: api-scan:ci
           severity: HIGH,CRITICAL # 이 등급이 발견되면
