@@ -23,8 +23,8 @@ logger = logging.getLogger(__name__)
 # 이미 진짜 환경변수가 있으면 그것이 우선 (배포 환경에선 .env 없이 환경변수/SM으로 주입).
 load_dotenv()
 
-# terraform/secrets.tf 에서 만든 시크릿 ID
-DATA_GO_KR_SECRET_ID = "data-go-kr-service-key"
+# terraform/secrets.tf 에서 만든 시크릿의 "이름" — 값이 아니라 금고 칸의 라벨이다 (B105 오탐)
+DATA_GO_KR_SECRET_ID = "data-go-kr-service-key"  # nosec B105
 
 
 @dataclass(frozen=True)  # frozen=True: 생성 후 값 변경 불가 — 설정이 도중에 바뀌는 버그 예방
