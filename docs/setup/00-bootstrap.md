@@ -15,6 +15,7 @@
 | 2026-07-06 | 예산 금액 확정 | `gcloud billing budgets update` | 실제 잔액 ₩432,898 확인 → 월 ₩216,000 (2개월 분할, PLAN.md 6.1 배분 계획 참조) |
 | 2026-07-06 | 공공데이터포털 식약처 화장품 API 활용 신청 | 웹 (수동) | 자동승인으로 즉시 완료 |
 | 2026-07-06 | Terraform state 버킷 생성 | `gcloud storage buckets create` | `beauty-pipeline-499600-tfstate` (버전 관리 ON). state 버킷은 Terraform이 스스로 만들 수 없는 닭-달걀 예외 |
+| 2026-07-09 | 시크릿 값 주입 (버전 1) | `gcloud secrets versions add` | 시크릿의 "그릇"은 Terraform, "값"은 수동 — 값이 TF 코드/state에 남으면 유출이므로 의도된 수동 절차 (terraform/secrets.tf 주석 참조) |
 
 ## 왜 이 작업들은 수동인가?
 
