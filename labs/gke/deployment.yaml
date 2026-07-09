@@ -1,0 +1,77 @@
+# ─────────────────────────────────────────────────────────────
+# 파일: labs/gke/deployment.yaml
+# 역할: [실습] 추천 API를 쿠버네티스에 배포하는 선언 — "이 상태를 유지하라"
+#
+# 쿠버네티스 3분 개념:
+#   Pod        = 컨테이너가 실제로 도는 최소 단위 (Cloud Run의 인스턴스에 해당)
+#   Deployment = "이 Pod를 N개, 이 이미지로, 항상 유지하라"는 선언. Pod가 죽으면 재생성
+#   Service    = Pod들 앞의 고정 주소 (Pod는 죽고 살며 IP가 바뀌므로)
+# Cloud Run과의 차이: Run은 이 모든 걸 구글이 대신 함. GKE는 우리가 선언으로 제어 —
+# 세밀한 제어(사이드카, 배치 워크로드, 내부 네트워크)가 필요할 때 GKE로 넘어온다.
+# ─────────────────────────────────────────────────────────────
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendation-api
+  labels:
+    app: recommendation-api
+spec:
+  replicas: 1 # 실습이므로 1개 (실무는 2+ — 배포/장애 중에도 응답 유지)
+  selector:
+    matchLabels:
+      app: recommendation-api # 아래 template의 라벨과 일치해야 함 — "내가 관리할 Pod" 식별
+  template:
+    metadata:
+      labels:
+        app: recommendation-api
+    spec:
+      # Workload Identity: 이 KSA(쿠버네티스 SA)가 GCP SA(sa-recommendation-api)로 행세
+      # → BigQuery 접근에 키 파일 불필요 (Cloud Run 때와 같은 키리스 원칙)
+      serviceAccountName: recommendation-api
+      containers:
+        - name: api
+          # CD가 마지막으로 배포한 것과 같은 이미지 재사용 (재빌드 불필요)
+          image: asia-northeast3-docker.pkg.dev/beauty-pipeline-499600/images/recommendation-api:0.1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: GOOGLE_CLOUD_PROJECT
+              value: beauty-pipeline-499600
+          resources: # Autopilot은 요청량 기준 과금 — 작게 요청 = 적게 과금
+            requests:
+              cpu: 250m # 0.25 vCPU
+              memory: 512Mi
+          # 쿠버네티스가 "살아있음"을 판단하는 기준 — 실패하면 컨테이너 재시작
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+          # "트래픽 받을 준비 됨" 판단 — 실패하면 Service가 이 Pod로 요청을 안 보냄
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+---
+# 외부 접근용 Service — 클라우드 로드밸런서가 자동 생성되어 공인 IP가 붙는다
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendation-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: recommendation-api # 이 라벨을 가진 Pod들로 트래픽 분배
+  ports:
+    - port: 80 # 외부 포트
+      targetPort: 8080 # 컨테이너 포트
+---
+# KSA(쿠버네티스 서비스 계정) — GCP SA와 연결(annotation)되어 Workload Identity의 반쪽이 된다
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: recommendation-api
+  annotations:
+    iam.gke.io/gcp-service-account: sa-recommendation-api@beauty-pipeline-499600.iam.gserviceaccount.com
