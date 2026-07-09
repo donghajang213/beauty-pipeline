@@ -1,0 +1,63 @@
+# ─────────────────────────────────────────────────────────────
+# 파일: .github/workflows/deploy.yml
+# 역할: CD(지속적 배포) — main에 API 코드가 병합되면 자동으로 빌드→푸시→Cloud Run 배포
+# 인증: Workload Identity Federation (terraform/wif.tf) — GitHub Secrets에 키 저장 안 함
+# 수동 실행: Actions 탭 → CD → Run workflow (workflow_dispatch)
+# ─────────────────────────────────────────────────────────────
+
+name: CD
+
+on:
+  push:
+    branches: [main]
+    paths: ["api/**"] # API 코드가 바뀔 때만 — 문서 커밋에 배포가 돌면 낭비
+  workflow_dispatch: {} # 수동 트리거 (첫 검증/재배포용)
+
+# OIDC 토큰 발급 권한 — WIF의 핵심. 이게 없으면 auth 단계에서 실패한다
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  REGION: asia-northeast3
+  IMAGE: asia-northeast3-docker.pkg.dev/beauty-pipeline-499600/images/recommendation-api
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1) 키리스 인증: GitHub OIDC 토큰 → GCP가 검증 → deployer SA 임시 자격 발급
+      - name: GCP 인증 (WIF)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/384584052290/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          service_account: sa-github-deployer@beauty-pipeline-499600.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Docker 인증 (Artifact Registry)
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      # 2) 이미지 태그 = 커밋 SHA — "지금 서빙 중인 코드가 어느 커밋인지" 즉시 추적 가능
+      - name: 빌드 & 푸시
+        run: |
+          TAG=${GITHUB_SHA::7}
+          docker build -t $IMAGE:$TAG -f api/Dockerfile .
+          docker push $IMAGE:$TAG
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+      # 3) 새 리비전 배포 — 트래픽은 자동으로 새 리비전으로 (문제 시 콘솔에서 이전 리비전 롤백)
+      - name: Cloud Run 배포
+        run: |
+          gcloud run deploy recommendation-api \
+            --image $IMAGE:$TAG \
+            --region ${{ env.REGION }} \
+            --quiet
+
+      # 4) 배포 검증 — 새 리비전이 실제로 응답하는지 (스모크 테스트)
+      - name: 스모크 테스트
+        run: |
+          URL=$(gcloud run services describe recommendation-api --region ${{ env.REGION }} --format='value(status.url)')
+          curl -sf $URL/health || (echo "헬스체크 실패" && exit 1)
