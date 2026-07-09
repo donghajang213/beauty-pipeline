@@ -72,7 +72,8 @@ def recommendations(
     limit: int = Query(default=10, ge=1, le=50, description="반환할 추천 수"),
 ) -> list[Recommendation]:
     """피부타입별 추천 상위 N개."""
-    # 파라미터 바인딩(@skin_type)을 쓴다 — 문자열 조립은 SQL 인젝션의 문 (보안 기본기)
+    # 사용자 입력은 전부 파라미터 바인딩(@skin_type, @limit) — f-string에 들어가는 것은
+    # 테이블 경로(신뢰된 설정값)뿐이다. SQL은 테이블명을 파라미터로 받을 수 없다.
     query = f"""
         select rank, product_id, product_name, category, price_krw, score,
                has_restricted_ingredient

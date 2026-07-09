@@ -39,6 +39,7 @@ AFFINITY_BOOST = 3  # 자기 피부타입 타깃 제품에 대한 선호 배수
 
 def load_catalog(bq: bigquery.Client) -> list[dict]:
     """raw.products의 최신 스냅샷을 읽는다 (generate_catalog.py 선행 필요)."""
+    # f-string에는 신뢰된 값(ADC 프로젝트 ID)만 — 외부 입력 없음
     query = f"""
         select product_id, target_skin_type
         from `{bq.project}.raw.products`

@@ -30,6 +30,7 @@ dependencies = [
 # 개발 의존성: 개발/CI에서만 쓰는 도구 (배포 이미지에는 안 들어감)
 [dependency-groups]
 dev = [
+    "bandit[toml]>=1.9.4",
     "pytest>=8.0", # 단위 테스트
     "ruff>=0.8",   # 린터 + 포매터 (RULES.md 3장)
 ]
@@ -41,6 +42,14 @@ target-version = "py312"
 [tool.ruff.lint]
 # E/F=기본 오류, I=import 정렬, B=버그 유발 패턴, UP=구식 문법 현대화
 select = ["E", "F", "I", "B", "UP"]
+
+[tool.bandit]
+# B311(random): 합성 데이터 생성용 — 암호/토큰 용도 아님. 시크릿 생성 필요 시 secrets 모듈 사용.
+# B608(SQL 조립): f-string에 들어가는 값은 신뢰된 설정(프로젝트 ID/테이블 경로)뿐이고,
+#   사용자 입력은 전부 파라미터 바인딩(api/main.py 참조). SQL은 테이블명을 파라미터로 받을 수
+#   없어 경로 삽입이 불가피. 여러 줄 f-string엔 #nosec이 안 붙는 Bandit 한계로 전역 제외하되,
+#   "새 쿼리에서 사용자 입력은 반드시 바인딩" 규칙은 코드리뷰로 지킨다 (RULES.md 4장).
+skips = ["B311", "B608"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
