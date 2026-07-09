@@ -40,3 +40,12 @@ resource "google_project_iam_member" "ingestion_runs_jobs" {
   role    = "roles/bigquery.jobUser"
   member  = "serviceAccount:${google_service_account.ingestion.email}"
 }
+
+# ── 권한 4 (실습): Dataproc Serverless 배치 실행 ──
+# Spark 잡이 이 SA로 돌려면 dataproc.worker 필요 (프로젝트 단위만 가능한 역할).
+# docs/labs/001 실습용 — 상시 리소스는 아니며, 실습 종료 후에도 무해해 유지 (Spark 재실습 대비).
+resource "google_project_iam_member" "ingestion_runs_spark" {
+  project = var.project_id
+  role    = "roles/dataproc.worker"
+  member  = "serviceAccount:${google_service_account.ingestion.email}"
+}
