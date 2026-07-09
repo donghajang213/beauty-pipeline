@@ -44,3 +44,42 @@ jobs:
       # 6) 단위 테스트 — 외부 API는 전부 mock이라 시크릿 없이 돈다
       - name: Test (pytest)
         run: uv run pytest -q
+
+  # ─────────────────────────────────────────────
+  # 보안 게이트 (Phase 3, RULES.md 4.3) — 하나라도 걸리면 병합 불가
+  # 3종이 각각 다른 층을 지킨다:
+  #   gitleaks = git 이력 속 시크릿 / Bandit = 파이썬 코드의 위험 패턴 / Trivy = 컨테이너 취약점
+  # ─────────────────────────────────────────────
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # gitleaks는 "전체 커밋 이력"을 뒤진다 — 과거에 묻힌 키도 잡기 위해
+
+      # 1) 시크릿 스캔 — API 키/토큰이 커밋됐는지 이력 전체 검사
+      #    래퍼 액션 대신 공식 컨테이너 직접 실행 — 추가 토큰/권한 불필요, 로컬 검증과 동일 방식
+      - name: Secret scan (gitleaks)
+        run: docker run --rm -v ${{ github.workspace }}:/repo zricethezav/gitleaks:latest git /repo --no-banner
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv sync --frozen
+
+      # 2) SAST(정적 분석) — 인젝션·하드코딩 비밀번호 등 위험 코드 패턴
+      #    제외 규칙(B311/B608)과 그 근거는 pyproject.toml [tool.bandit]에 문서화
+      - name: SAST (Bandit)
+        run: uv run bandit -c pyproject.toml -r ingestion api
+
+      # 3) 컨테이너 취약점 스캔 — 배포 이미지를 CI에서 빌드해 검사
+      - name: Build API image for scan
+        run: docker build -t api-scan:ci -f api/Dockerfile .
+
+      - name: Image scan (Trivy)
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: api-scan:ci
+          severity: HIGH,CRITICAL # 이 등급이 발견되면
+          exit-code: "1" # 실패 처리 = 병합 차단
+          ignore-unfixed: true # 아직 패치가 없는 취약점은 제외 (조치 불가능한 경보는 소음)

@@ -31,6 +31,7 @@ LINES = ["수분", "진정", "미백", "탄력", "저자극", "모공"]
 
 def fetch_real_ingredient_names(client: bigquery.Client, limit: int = 2000) -> list[str]:
     """실제 성분 사전에서 성분명을 가져온다 — 합성 카탈로그에 '진짜 재료'를 쓰기 위해."""
+    # f-string에는 신뢰된 값(프로젝트 ID, 정수 limit)만 — 외부 입력 없음
     query = f"""
         select ingredient_name_kr
         from `{client.project}.staging.stg_ingredient`
