@@ -24,3 +24,14 @@ models:
       - name: rank
         tests:
           - not_null
+
+  - name: dashboard_events_daily
+    description: "Looker Studio 전용 일별 이벤트 KPI (grain: 날짜×이벤트타입)"
+    columns:
+      - name: event_date
+        tests:
+          - not_null
+      - name: event_type
+        tests:
+          - accepted_values:
+              values: ["view", "like", "purchase", "rating"]
