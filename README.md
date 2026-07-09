@@ -5,7 +5,8 @@
 > 인프라 100% Terraform, CI 보안 게이트 3종, 키리스 CD — 1인 프로젝트, 상시 비용 0원.
 
 **🔗 라이브 데모**: [추천 API (Swagger)](https://recommendation-api-bfvsee2ydq-du.a.run.app/docs) ·
-[호출 예시](https://recommendation-api-bfvsee2ydq-du.a.run.app/recommendations/dry?limit=3)
+[호출 예시](https://recommendation-api-bfvsee2ydq-du.a.run.app/recommendations/dry?limit=3) ·
+[📊 대시보드 (Looker Studio)](https://datastudio.google.com/reporting/8dac604e-c634-483e-a1d5-3b90c51202d2)
 **📖 처음이라면**: [프로젝트 투어](docs/project-tour.md) — 데이터 흐름과 모든 폴더 5분 안내
 
 ## 아키텍처

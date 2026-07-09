@@ -25,6 +25,8 @@
      `rank`, `product_name`, 측정항목 `score`, 필터 `rank <= 5` → 최종 산출물 전시
 4. 우측 상단 **공유 → 링크 사용 설정** → URL을 README와 포트폴리오_소개에 기록
 
+> ✅ 완성 (2026-07-09): https://datastudio.google.com/reporting/8dac604e-c634-483e-a1d5-3b90c51202d2
+
 ## 팁
 
 - 새로고침 주기는 기본(12시간)이면 충분 — 일 배치 데이터라 실시간 새로고침은 스캔 비용만 낭비
