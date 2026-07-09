@@ -1,0 +1,3 @@
+# 오탐(false positive) 지문 목록 - 각 항목에 근거를 남길 것
+# README 기술 표의 'Secret Manager, gitleaks...' 문구를 generic-api-key가 오인 (실제 비밀값 아님, 2026-07-09 검토)
+cefa136fab1afc26624771ff7463441f650e409b:README.md:generic-api-key:41
