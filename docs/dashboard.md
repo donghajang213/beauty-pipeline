@@ -14,12 +14,15 @@
 
 1. https://lookerstudio.google.com → **만들기 → 보고서**
 2. 데이터 연결: **BigQuery** → `beauty-pipeline-499600` → `marts` → `dashboard_events_daily`
-3. 추천 차트 4개:
-   - **시계열 차트**: 측정기준 `event_date`, 측정항목 `events`, 분류 `event_type`
-     → "매일 파이프라인이 살아있다"는 증거 (7일 무인 운영의 시각화)
-   - **스코어카드 2개**: `active_users` 합계 / `events` 합계
-   - **표**: 데이터 추가로 `recommendations` 연결 → `skin_type`, `rank`, `product_name`,
-     `score` (필터: rank <= 5) → 최종 산출물 전시
+3. 추천 차트 4개 (차트 선택 후 오른쪽 "설정" 탭에서):
+   - **시계열 차트**: 측정기준 `event_date` / 그 아래 **분류 측정기준** 칸에 `event_type` /
+     측정항목 `events` → 이벤트 타입별 색깔 선 4개 = "매일 파이프라인이 살아있다"는 증거
+   - **스코어카드 위젯 2개** (스코어카드는 숫자 1개짜리 위젯 — 분류 개념 없음):
+     하나는 측정항목 `events`(합계), 다른 하나는 `active_users`(합계)
+     ※ active_users 합계 = "일별 고유 사용자의 합" — 여러 날 활동한 사용자는 중복 집계.
+       활동 수준 지표로 해석할 것 (전체 고유 사용자 수와 다름을 아는 게 지표 리터러시)
+   - **표**: 상단 메뉴 "데이터 추가"로 `marts.recommendations` 연결 → 측정기준 `skin_type`,
+     `rank`, `product_name`, 측정항목 `score`, 필터 `rank <= 5` → 최종 산출물 전시
 4. 우측 상단 **공유 → 링크 사용 설정** → URL을 README와 포트폴리오_소개에 기록
 
 ## 팁
