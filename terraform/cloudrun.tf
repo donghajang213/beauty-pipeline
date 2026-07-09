@@ -59,6 +59,12 @@ resource "google_cloud_run_v2_service" "api" {
   location = var.region
   labels   = var.labels
 
+  # CD(deploy.yml)가 새 이미지를 배포하면 Terraform과 실제가 달라진다(드리프트).
+  # 이미지는 CD의 소유물로 선언 — Terraform은 이미지 변경을 무시한다 (역할 분담).
+  lifecycle {
+    ignore_changes = [template[0].containers[0].image]
+  }
+
   template {
     service_account = google_service_account.api.email # 키 파일 없이 SA가 직접 붙음
 
