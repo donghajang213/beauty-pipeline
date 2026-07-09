@@ -151,11 +151,13 @@ data_engineer_portfolio/
 - [x] Cloud Monitoring 알림: API uptime/5xx + 예산(Phase 0). DAG 실패 알림은 로컬 Airflow 한계로 미구현 (트레이드오프 문서화)
 - [x] (Phase 2 이월) CD: main 병합 시 자동 배포 — WIF 키리스, 첫 배포 실증 완료
 
-### Phase 4 — 마무리 (7~8주차: ~8/31)
-- [ ] 대시보드 (Looker Studio 또는 Grafana)
-- [ ] README 완성: 아키텍처 다이어그램, 실행 방법, 기술 선택 이유
-- [ ] 트러블슈팅/회고 문서 정리 (면접 대비 핵심 자료)
-- [ ] 크레딧 종료 대비: 리소스 정리 스크립트, 로컬 재현 가능하게 정리
+### Phase 4 — 마무리 (7~8주차: ~8/31) — 진행 중
+- [x] 대시보드: dbt 마트 뷰 + Looker Studio 가이드 (보고서 생성은 수동 클릭 — docs/dashboard.md)
+- [x] README 완성: 검증된 숫자, 기술 선택의 "왜", 재현 방법
+- [x] 크레딧 종료 대비: 철거 계획서 (docs/teardown-plan.md)
+- [x] (추가) 단기 실습 2종: Dataproc Serverless Spark, GKE Autopilot — docs/labs/
+- [ ] 7일+ 무인 운영 관찰 완료 (진행 중) 후 최종 숫자 반영
+- [ ] 8월 말: 스크린샷 아카이브 → terraform destroy (철거 계획서 순서대로)
 
 ---
 
