@@ -58,10 +58,9 @@ jobs:
           fetch-depth: 0 # gitleaks는 "전체 커밋 이력"을 뒤진다 — 과거에 묻힌 키도 잡기 위해
 
       # 1) 시크릿 스캔 — API 키/토큰이 커밋됐는지 이력 전체 검사
+      #    래퍼 액션 대신 공식 컨테이너 직접 실행 — 추가 토큰/권한 불필요, 로컬 검증과 동일 방식
       - name: Secret scan (gitleaks)
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # PR에 결과 코멘트를 달기 위한 기본 토큰
+        run: docker run --rm -v ${{ github.workspace }}:/repo zricethezav/gitleaks:latest git /repo --no-banner
 
       - uses: astral-sh/setup-uv@v5
         with:
