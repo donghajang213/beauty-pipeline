@@ -12,6 +12,7 @@
 | `roles/storage.objectAdmin` | `{project}-data-lake` 버킷만 | 원본 데이터 업로드(쓰기)와 재처리 시 읽기. 버킷 설정 변경은 불가 |
 | `roles/bigquery.dataEditor` | `raw` 데이터셋만 | 원본 테이블 생성/적재. staging/mart 오염 방지를 위해 데이터셋 단위 |
 | `roles/bigquery.jobUser` | 프로젝트 (예외) | load job 실행 권한. 이 역할은 프로젝트 단위로만 부여 가능해 예외 허용 |
+| `roles/secretmanager.secretAccessor` | `data-go-kr-service-key` 시크릿만 | 공공데이터포털 인증키 읽기 (Phase 3 — .env 없이 클라우드에서 실행 가능) |
 
 ## sa-event-generator (이벤트 생성기)
 
