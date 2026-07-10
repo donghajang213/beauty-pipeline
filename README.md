@@ -49,7 +49,7 @@
 | [terraform/](terraform/) · [ingestion/](ingestion/) · [dbt/](dbt/) · [airflow/](airflow/) · [api/](api/) | 파이프라인 단계별 코드 (각 폴더에 README) |
 | [docs/adr/](docs/adr/) · [docs/troubleshooting/](docs/troubleshooting/) · [docs/labs/](docs/labs/) | 결정 기록 / 삽질 기록 / 단기 실습 실측 |
 | [docs/iam.md](docs/iam.md) · [docs/teardown-plan.md](docs/teardown-plan.md) | 권한 대장 / 크레딧 종료 철거 계획 |
-| [writing/](writing/) | 블로그 시리즈 초안 · 포트폴리오 1페이지 |
+| [docs/greenfield-playbook.md](docs/greenfield-playbook.md) | 0에서 데이터 플랫폼을 세우는 순서 — 이 저장소가 워크드 예제 |
 
 ## 재현 방법
 
